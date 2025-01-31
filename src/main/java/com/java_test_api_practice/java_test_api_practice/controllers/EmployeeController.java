@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/employees")
 public class EmployeeController {
@@ -16,19 +18,58 @@ public class EmployeeController {
     @Autowired
     private EmployeeServiceImpl employeeServiceImpl;
 
-    @PutMapping
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<Employee>>> getAllEmployees(HttpServletRequest request) {
+        List<Employee> employeesList = employeeServiceImpl.getEmployees();
+        return ResponseEntity.ok(ResponseUtil.success(
+                        employeesList,
+                        "List of employee",
+                        request.getRequestURI()
+                )
+        );
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<Employee>> addEmployee(@RequestBody Employee employee, HttpServletRequest request) {
+        Employee employeeCreated = employeeServiceImpl.createEmployee(employee);
+        return ResponseEntity.ok(ResponseUtil.success(
+                employeeCreated,
+                "Employee was created",
+                request.getRequestURI()
+        ));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<Employee>> getEmployee(@PathVariable Long id, HttpServletRequest request) {
+        Employee employee = employeeServiceImpl.getEmployee(id);
+        return ResponseEntity.ok(ResponseUtil.success(
+                employee,
+                "Employee was found",
+                request.getRequestURI()
+        ));
+    }
+
+    @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Employee>> updateEmployee(
             @PathVariable Long id,
             @RequestBody Employee employee,
             HttpServletRequest request
     ) {
         Employee updatedEmployee = employeeServiceImpl.updateEmployee(id, employee);
-        return ResponseEntity.ok(
-                ResponseUtil.success(
-                        updatedEmployee,
-                        "Employee updated successfully",
-                        request.getRequestURI()
-                )
-        );
+        return ResponseEntity.ok(ResponseUtil.success(
+                updatedEmployee,
+                "Employee updated successfully",
+                request.getRequestURI()
+        ));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteEmployee(@PathVariable Long id, HttpServletRequest request) {
+        String value = employeeServiceImpl.deleteEmployee(id);
+        return ResponseEntity.ok(ResponseUtil.success(
+                value,
+                "Employee was deleted",
+                request.getRequestURI()
+        ));
     }
 }

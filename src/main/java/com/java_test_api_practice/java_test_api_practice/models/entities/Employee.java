@@ -3,6 +3,7 @@ package com.java_test_api_practice.java_test_api_practice.models.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -28,12 +29,12 @@ public class Employee {
     @Column(unique = true)
     private String email;
 
-    @NotBlank(message = "You must insert a birthday!")
+    @NotNull(message = "You must insert a birthday!")
     private LocalDate birthday;
 
-    @NotBlank(message = "You must insert a start date!")
+    @NotNull(message = "You must insert a start date!")
     private LocalDate startDay;
 
-    @NotBlank(message = "You must insert is active or not!")
+    @NotNull(message = "You must insert is active or not!")
     private Boolean active;
 }

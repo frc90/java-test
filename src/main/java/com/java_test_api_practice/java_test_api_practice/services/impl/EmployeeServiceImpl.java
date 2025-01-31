@@ -19,17 +19,28 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> getEmployees() {
-        return List.of();
+        List<Employee> employees = employeeRepository.findAll();
+        if (!employees.isEmpty()) {
+            return employees;
+        }else {
+            throw new ResourceNotFoundException("No employee found");
+        }
     }
 
     @Override
-    public String createEmployee(Employee employee) {
-        return "";
+    public Employee createEmployee(Employee employee) {
+        return employeeRepository.save(employee);
     }
 
     @Override
     public Employee getEmployee(Long id) {
-        return null;
+        Optional<Employee> employeeOptional = employeeRepository.findById(id);
+        if (employeeOptional.isPresent()) {
+            return employeeOptional.get();
+        }else{
+            throw new ResourceNotFoundException("Employee not found");
+        }
+
     }
 
     @Override
@@ -53,6 +64,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public String deleteEmployee(Long id) {
-        return "";
+        Optional<Employee> employeeOptional = employeeRepository.findById(id);
+        if (employeeOptional.isPresent()) {
+            employeeRepository.delete(employeeOptional.get());
+            return "Employee " + employeeOptional.get().getUsername() + " deleted.";
+        }else{
+            throw new ResourceNotFoundException("Employee not found with id " + id);
+        }
     }
 }
