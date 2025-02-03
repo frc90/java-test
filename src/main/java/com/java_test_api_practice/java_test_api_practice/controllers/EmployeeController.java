@@ -53,7 +53,10 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Employee>> getEmployee(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Employee>> getEmployee(
+            @PathVariable Long id,
+            HttpServletRequest request) {
+
         Employee employee = employeeServiceImpl.getEmployee(id);
         return ResponseEntity.ok(ResponseUtil.success(
                 employee,
@@ -65,9 +68,18 @@ public class EmployeeController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Employee>> updateEmployee(
             @PathVariable Long id,
-            @RequestBody Employee employee,
+            @RequestBody @Valid Employee employee,
+            BindingResult bindingResult,
             HttpServletRequest request
     ) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(ResponseUtil.error(
+                    bindingResult.getAllErrors().get(0).getDefaultMessage(),
+                    "Error to update employee",
+                    400,
+                    request.getRequestURI()
+            ));
+        }
         Employee updatedEmployee = employeeServiceImpl.updateEmployee(id, employee);
         return ResponseEntity.ok(ResponseUtil.success(
                 updatedEmployee,
