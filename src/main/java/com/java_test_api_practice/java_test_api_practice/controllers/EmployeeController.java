@@ -5,8 +5,10 @@ import com.java_test_api_practice.java_test_api_practice.services.impl.EmployeeS
 import com.java_test_api_practice.java_test_api_practice.utils.response.ApiResponse;
 import com.java_test_api_practice.java_test_api_practice.utils.response.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +32,18 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Employee>> addEmployee(@RequestBody Employee employee, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Employee>> addEmployee(
+            @RequestBody @Valid Employee employee,
+            BindingResult bindingResult,
+            HttpServletRequest request
+    ) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(ResponseUtil.error(
+                    bindingResult.getAllErrors().get(0).getDefaultMessage(),
+                    "Error to create employee",
+                    400,
+                    request.getRequestURI()));
+        }
         Employee employeeCreated = employeeServiceImpl.createEmployee(employee);
         return ResponseEntity.ok(ResponseUtil.success(
                 employeeCreated,
