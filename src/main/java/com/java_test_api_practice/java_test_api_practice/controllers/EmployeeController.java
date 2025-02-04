@@ -47,7 +47,7 @@ public class EmployeeController {
         Employee employeeCreated = employeeServiceImpl.createEmployee(employee);
         return ResponseEntity.ok(ResponseUtil.success(
                 employeeCreated,
-                "Employee was created",
+                "Employee created successfully",
                 request.getRequestURI()
         ));
     }
@@ -60,7 +60,7 @@ public class EmployeeController {
         Employee employee = employeeServiceImpl.getEmployee(id);
         return ResponseEntity.ok(ResponseUtil.success(
                 employee,
-                "Employee was found",
+                "Employee found",
                 request.getRequestURI()
         ));
     }
@@ -93,7 +93,7 @@ public class EmployeeController {
         String value = employeeServiceImpl.deleteEmployee(id);
         return ResponseEntity.ok(ResponseUtil.success(
                 value,
-                "Employee was deleted",
+                "Employee was deleted successfully",
                 request.getRequestURI()
         ));
     }

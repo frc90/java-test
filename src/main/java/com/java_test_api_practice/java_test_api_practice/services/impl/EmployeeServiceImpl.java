@@ -3,6 +3,7 @@ package com.java_test_api_practice.java_test_api_practice.services.impl;
 import com.java_test_api_practice.java_test_api_practice.models.entities.Employee;
 import com.java_test_api_practice.java_test_api_practice.repositories.EmployeeRepository;
 import com.java_test_api_practice.java_test_api_practice.services.interfaces.EmployeeService;
+import com.java_test_api_practice.java_test_api_practice.utils.exectpions.ResourceConflictException;
 import com.java_test_api_practice.java_test_api_practice.utils.exectpions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee createEmployee(Employee employee) {
+        if(employeeRepository.findByEmail(employee.getEmail()).isPresent()){
+            throw new ResourceConflictException("Email already in use");
+        }
         return employeeRepository.save(employee);
     }
 
@@ -64,12 +68,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public String deleteEmployee(Long id) {
-        Optional<Employee> employeeOptional = employeeRepository.findById(id);
-        if (employeeOptional.isPresent()) {
-            employeeRepository.delete(employeeOptional.get());
-            return "Employee " + employeeOptional.get().getUsername() + " deleted.";
-        }else{
+        if (!employeeRepository.existsById(id)) {
             throw new ResourceNotFoundException("Employee not found with id " + id);
         }
+        employeeRepository.deleteById(id);
+        return "Employee deleted with id: " + id;
     }
 }
