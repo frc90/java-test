@@ -1,16 +1,21 @@
 package com.java_test_api_practice.java_test_api_practice.services.impl;
 
+import com.java_test_api_practice.java_test_api_practice.models.dto.EventDateDto;
 import com.java_test_api_practice.java_test_api_practice.models.entities.Employee;
 import com.java_test_api_practice.java_test_api_practice.repositories.EmployeeRepository;
 import com.java_test_api_practice.java_test_api_practice.services.interfaces.EmployeeService;
+import com.java_test_api_practice.java_test_api_practice.utils.events.EnterpriseEvents;
 import com.java_test_api_practice.java_test_api_practice.utils.exectpions.ResourceConflictException;
 import com.java_test_api_practice.java_test_api_practice.utils.exectpions.ResourceNotFoundException;
+import com.java_test_api_practice.java_test_api_practice.utils.response.EventResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -73,5 +78,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         employeeRepository.deleteById(id);
         return "Employee deleted with id: " + id;
+    }
+
+    @Override
+    public List<EventResponse> getUpcomingEvents(EventDateDto eventDate) {
+        LocalDate startDate = eventDate.getStartDate();
+        LocalDate endDate = startDate.plusDays(eventDate.getDaysAhead());
+
+        return employeeRepository.findAll().stream()
+                .map(employee -> EnterpriseEvents.calculateEvents(employee, startDate, endDate))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 }

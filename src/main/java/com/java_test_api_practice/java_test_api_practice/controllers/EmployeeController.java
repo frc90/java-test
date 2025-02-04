@@ -1,8 +1,10 @@
 package com.java_test_api_practice.java_test_api_practice.controllers;
 
+import com.java_test_api_practice.java_test_api_practice.models.dto.EventDateDto;
 import com.java_test_api_practice.java_test_api_practice.models.entities.Employee;
 import com.java_test_api_practice.java_test_api_practice.services.impl.EmployeeServiceImpl;
 import com.java_test_api_practice.java_test_api_practice.utils.response.ApiResponse;
+import com.java_test_api_practice.java_test_api_practice.utils.response.EventResponse;
 import com.java_test_api_practice.java_test_api_practice.utils.response.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -94,6 +96,28 @@ public class EmployeeController {
         return ResponseEntity.ok(ResponseUtil.success(
                 value,
                 "Employee was deleted successfully",
+                request.getRequestURI()
+        ));
+    }
+
+    @PostMapping("/events")
+    public ResponseEntity<ApiResponse<List<EventResponse>>> getEmployeeEvents(
+            @RequestBody @Valid EventDateDto eventDate,
+            BindingResult bindingResult,
+            HttpServletRequest request
+    ) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(ResponseUtil.error(
+                    bindingResult.getAllErrors().get(0).getDefaultMessage(),
+                    "Something wrong!!",
+                    400,
+                    request.getRequestURI()
+            ));
+        }
+        List<EventResponse> eventResponse = employeeServiceImpl.getUpcomingEvents(eventDate);
+        return ResponseEntity.ok(ResponseUtil.success(
+                eventResponse,
+                "Events in a date range",
                 request.getRequestURI()
         ));
     }
