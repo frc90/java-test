@@ -25,7 +25,7 @@ public class HolidayServiceImpl implements HolidayService {
     private String API_KEY;
 
 
-    private String URL = "&country=US&year=%d&month=%d&day=%d";
+    String URL = "&country=US&year=%d&month=%d&day=%d";
 
     public HolidayServiceImpl(ObjectMapper objectMapper, RestTemplate restTemplate) {
         this.objectMapper = objectMapper;
@@ -60,7 +60,7 @@ public class HolidayServiceImpl implements HolidayService {
             if (response.hasBody() && response.getBody() != null) {
                 List<HolidayDesDto> holidays = objectMapper.readValue(
                         response.getBody(),
-                        new TypeReference<List<HolidayDesDto>>() {}
+                        new TypeReference<>() {}
                 );
                 if (!holidays.isEmpty()) {
                     return true;

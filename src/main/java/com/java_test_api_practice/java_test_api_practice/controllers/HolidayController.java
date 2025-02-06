@@ -1,6 +1,5 @@
 package com.java_test_api_practice.java_test_api_practice.controllers;
 
-import com.java_test_api_practice.java_test_api_practice.models.dto.HolidayDto;
 import com.java_test_api_practice.java_test_api_practice.services.impl.HolidayServiceImpl;
 import com.java_test_api_practice.java_test_api_practice.utils.response.ApiResponse;
 import com.java_test_api_practice.java_test_api_practice.utils.response.ResponseUtil;
